@@ -9,6 +9,7 @@ class Coloring {
     public:
         Coloring();
         virtual QColor getColor(int32_t iterations, double normal) = 0;
+        virtual QColor getColor_avx(int32_t iterations, double normal) = 0;
 };
 
 #endif

@@ -74,10 +74,10 @@ void Mandelbrot::calcMandelbrotWorkerTiled_avx(uint32_t hstart, uint32_t hend,
 
             auto mb = calcMandelbrot_avx(imag, real1, imag, real2);
             uint32_t yy = (y - hstart);
-            buf.setPixelColor(x, yy, coloring->getColor(mb.it1, mb.abs1));
+            buf.setPixelColor(x, yy, coloring->getColor_avx(mb.it1, mb.abs1));
 
             if(x + 1 < width) {
-                buf.setPixelColor(x + 1, yy, coloring->getColor(mb.it2, 
+                buf.setPixelColor(x + 1, yy, coloring->getColor_avx(mb.it2, 
                             mb.abs2));
             }
         }

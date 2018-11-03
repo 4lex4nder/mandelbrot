@@ -1,3 +1,4 @@
+#include <immintrin.h>
 #include "smooth_color.h"
 
 SmoothColoring::SmoothColoring(): SmoothColoring(3) {
@@ -51,6 +52,21 @@ QColor SmoothColoring::interpolateColor(const QColor& c1, const QColor& c2,
     return ret;
 }
 
+QColor SmoothColoring::interpolateColor_avx(const QColor& c1, const QColor& c2,
+        double r) {
+    __m256d vr = _mm256_set1_pd(r);
+    __m256d vc1 = _mm256_setr_pd(c1.redF(), c1.greenF(), c1.blueF(), 0);
+    __m256d vc2 = _mm256_setr_pd(c2.redF(), c2.greenF(), c2.blueF(), 0);
+
+    __m256d vcdiff = _mm256_sub_pd(vc2, vc1);
+    vc1 = _mm256_fmadd_pd(vcdiff, vr, vc1);
+
+    QColor ret;
+    ret.setRgbF(vc1[0], vc1[1], vc1[2]);
+
+    return ret;
+}
+
 double SmoothColoring::nu(int32_t it, double norm) {
     double log_zn = std::log(norm) / 2;
     double nu = std::log(log_zn / log_2) / log_2;
@@ -71,3 +87,16 @@ QColor SmoothColoring::getColor(int32_t iterations, double normal) {
                          itnorm - (long)itnorm);
 }
 
+QColor SmoothColoring::getColor_avx(int32_t iterations, double normal) {
+    if(iterations == INT32_MIN)
+        return QColor(0, 0, 0);
+
+    double itnorm = nu(iterations, normal);
+    int32_t fcval = static_cast<int32_t>(std::floor(itnorm));
+
+    return interpolateColor_avx(gradient_colors.at(fcval
+                                          % gradient_colors.size()),
+                         gradient_colors.at((fcval + 1)
+                                          % gradient_colors.size()),
+                         itnorm - (long)itnorm);
+}

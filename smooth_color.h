@@ -15,6 +15,8 @@ class SmoothColoring: public Coloring {
 
         QColor interpolateColor(const QColor& c1, 
                 const QColor& c2, double r);
+        QColor interpolateColor_avx(const QColor& c1, 
+                const QColor& c2, double r);
     public:
         SmoothColoring();
         SmoothColoring(uint32_t num_colors);
@@ -22,6 +24,7 @@ class SmoothColoring: public Coloring {
 
         inline double nu(int32_t it, double norm);
         virtual QColor getColor(int32_t iterations, double normal);
+        virtual QColor getColor_avx(int32_t iterations, double normal);
 };
 
 #endif //_SMOOTH_COLOR_H
