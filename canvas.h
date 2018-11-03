@@ -40,7 +40,6 @@ private:
     QImage preview_buffer;
     std::vector<QImage> t_draw_buffer;
     std::vector<QImage> t_preview_buffer;
-    std::mutex draw_mut;
 
     void resizeBuffer();
 signals:

@@ -51,8 +51,6 @@ void Canvas::resizeBuffer() {
 }
 
 void Canvas::paintEvent(QPaintEvent* ev) {
-    draw_mut.lock();
-
     QPainter p(this);
     if(!mousePressed) {
         // Directly draw tiles onto main draw buffer
@@ -85,16 +83,10 @@ void Canvas::paintEvent(QPaintEvent* ev) {
         // Draw (scaled) preview buffer to main draw buffer
         p.drawImage(0, 0, preview_buffer.scaled(this->width(), this->height()));
     }
-
-    draw_mut.unlock();
 }
 
 void Canvas::resizeEvent(QResizeEvent* ev) {
-    draw_mut.lock();
-
     resizeBuffer();
-
-    draw_mut.unlock();
 
     QWidget::resizeEvent(ev);
 }
@@ -178,12 +170,8 @@ void Canvas::wheelEvent(QWheelEvent* ev) {
 }
 
 void Canvas::setThreads(uint8_t t) {
-    draw_mut.lock();
-
     thread_num = t;
     t_draw_buffer.resize(t);
     t_preview_buffer.resize(t);
     resizeBuffer();
-
-    draw_mut.unlock();
 }

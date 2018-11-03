@@ -33,11 +33,8 @@ struct mcalc_result_avx {
 class Mandelbrot
 {
 private:
-    std::mutex dim_mutex;
     std::unique_ptr<Coloring> coloring;
-
     uint32_t max_iter;
-
     m_dimension dimensions;
 
 public:

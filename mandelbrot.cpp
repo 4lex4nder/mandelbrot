@@ -17,8 +17,6 @@ void Mandelbrot::refreshMandelbrotTiled(std::vector<QImage>& tiles) {
 
     auto start = timer::now();
 
-    dim_mutex.lock();
-
     // Determine global width and height (sum of all tiles)
     uint32_t width = tiles.at(0).width();
     uint32_t height = 0;
@@ -51,8 +49,6 @@ void Mandelbrot::refreshMandelbrotTiled(std::vector<QImage>& tiles) {
 
     for(auto& t: workers)
         t.join();
-
-    dim_mutex.unlock();
 
     auto end = timer::now();
 
@@ -189,12 +185,8 @@ mcalc_result_avx Mandelbrot::calcMandelbrot_avx(double imag1,
 }
 
 void Mandelbrot::updateComplexDimensions(const m_dimension& d) {
-    dim_mutex.lock();
-
     dimensions.m_height = d.m_height;
     dimensions.m_width = d.m_width;
     dimensions.m_offset_x = d.m_offset_x;
     dimensions.m_offset_y = d.m_offset_y;
-
-    dim_mutex.unlock();
 }
