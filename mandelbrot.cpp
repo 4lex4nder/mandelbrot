@@ -59,7 +59,6 @@ void Mandelbrot::refreshMandelbrotTiled(std::vector<QImage>& tiles) {
 void Mandelbrot::calcMandelbrotWorkerTiled_avx(uint32_t hstart, uint32_t hend, 
         uint32_t width, uint32_t height, QImage& buf) {
 
-    QPainter p(&buf);
     for(uint32_t y = hstart; y < hend; y++) {
         double imag = dimensions.m_offset_y
                 - (static_cast<double>(y) / (height - 1))
@@ -75,12 +74,11 @@ void Mandelbrot::calcMandelbrotWorkerTiled_avx(uint32_t hstart, uint32_t hend,
 
             auto mb = calcMandelbrot_avx(imag, real1, imag, real2);
             uint32_t yy = (y - hstart);
-            p.setPen(coloring->getColor(mb.it1, mb.abs1));
-            p.drawPoint(QPoint(x, yy));
+            buf.setPixelColor(x, yy, coloring->getColor(mb.it1, mb.abs1));
 
             if(x + 1 < width) {
-                p.setPen(coloring->getColor(mb.it2, mb.abs2));
-                p.drawPoint(QPoint(x + 1, yy));
+                buf.setPixelColor(x + 1, yy, coloring->getColor(mb.it2, 
+                            mb.abs2));
             }
         }
     }
@@ -89,7 +87,6 @@ void Mandelbrot::calcMandelbrotWorkerTiled_avx(uint32_t hstart, uint32_t hend,
 void Mandelbrot::calcMandelbrotWorkerTiled(uint32_t hstart, uint32_t hend, 
             uint32_t width, uint32_t height, QImage& buf) {
 
-    QPainter p(&buf);
     for(uint32_t y = hstart; y < hend; y++) {
         double imag = dimensions.m_offset_y
                 - (static_cast<double>(y) / (height - 1))
@@ -102,8 +99,7 @@ void Mandelbrot::calcMandelbrotWorkerTiled(uint32_t hstart, uint32_t hend,
 
             auto mb = calcMandelbrot(complex(real, imag));
             uint32_t yy = (y - hstart);
-            p.setPen(coloring->getColor(mb.second, mb.first));
-            p.drawPoint(QPoint(x, yy));
+            buf.setPixelColor(x, yy, coloring->getColor(mb.second, mb.first));
         }
     }
 }
